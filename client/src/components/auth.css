@@ -1,0 +1,36 @@
+.auth_card{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 360px;
+    background-color: white;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+
+}
+
+.auth_header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth_header svg{
+    color: #4A90E2;
+    font-size: 2rem;
+}
+.auth_header p{
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+.auth_header span{
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+    color: #777;
+}
