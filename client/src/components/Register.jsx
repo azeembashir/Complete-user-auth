@@ -15,9 +15,11 @@ import {
   Visibility,
   VisibilityOff,
 } from "@mui/icons-material";
+import useGeneral from "../hooks/useGeneral";
 
 const Register = () => {
   const [visible, setVisible] = useState(false);
+  const { navigate } = useGeneral();
 
   const visibleHandler = () => {
     setVisible(!visible);
@@ -124,6 +126,7 @@ const Register = () => {
                 </div>
                 <div className="col-12">
                   <Button
+                    onClick={()=> navigate("/login")}
                     variant="outlined"
                     fullWidth
                     startIcon={<ArrowBack />}

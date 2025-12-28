@@ -10,9 +10,11 @@ import { IoIosLogIn } from "react-icons/io";
 import * as yup from "yup";
 import { Form, Formik } from "formik";
 import { ArrowBack, Google, Visibility, VisibilityOff } from "@mui/icons-material";
+import useGeneral from "../hooks/useGeneral";
 
 const Login = () => {
   const [visible, setVisible] = useState(false);
+  const { navigate } = useGeneral();
 
   const visibleHandler = () => {
     setVisible(!visible);
@@ -37,6 +39,10 @@ const Login = () => {
   const submitHandler = (values) => {
     console.log(values);
   };
+
+  const loginWithGoogle = () => {
+    window.location.href = "http://localhost:5050/auth/google";
+  }
 
   return (
     <div className="auth_card">
@@ -99,17 +105,17 @@ const Login = () => {
                 </div>
 
                 <div className="col-12">
-                  <Button variant="outlined" fullWidth endIcon={<Google />}>
+                  <Button onClick={loginWithGoogle} variant="outlined" fullWidth endIcon={<Google />}>
                     Google
                   </Button>
                 </div>
                 <div className="col-12">
-                  <Button variant="outlined" fullWidth startIcon={<ArrowBack />}>
+                  <Button onClick={()=> navigate("/register")} variant="outlined" fullWidth startIcon={<ArrowBack />}>
                     Create New Account
                   </Button>
                 </div>
                 <div className="col-12">
-                  <Button variant="text" fullWidth color="error">
+                  <Button onClick={()=> navigate("/password/forget")} variant="text" fullWidth color="error">
                     forget password?
                   </Button>
                 </div>

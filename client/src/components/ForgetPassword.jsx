@@ -6,8 +6,13 @@ import * as yup from "yup";
 import { Form, Formik } from "formik";
 import { ArrowBack, ChairAltTwoTone } from "@mui/icons-material";
 import { IoMdSend } from "react-icons/io";
+import useGeneral from "../hooks/useGeneral";
 
 const ForgetPassword = () => {
+
+  const { navigate } = useGeneral();
+
+
   const initialState = {
     email: "",
   };
@@ -20,6 +25,7 @@ const ForgetPassword = () => {
   });
   const submitHandler = (values) => {
     console.log(values);
+    navigate("/otp/verify");
   };
   return (
     <div className="auth_card">
@@ -67,6 +73,7 @@ const ForgetPassword = () => {
 
                 <div className="col-12">
                   <Button
+                    onClick={() => navigate("/login")}
                     variant="outlined"
                     fullWidth
                     startIcon={<ArrowBack />}
