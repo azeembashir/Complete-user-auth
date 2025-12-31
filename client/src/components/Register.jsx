@@ -8,22 +8,20 @@ import {
 import React, { useState } from "react";
 import { IoMdPersonAdd } from "react-icons/io";
 import * as yup from "yup";
-import { Form, Formik } from "formik";
-import {
-  ArrowBack,
-  Google,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Formik, Form } from "formik";
+import { ArrowBack, Google, Visibility, VisibilityOff } from "@mui/icons-material";
 import useGeneral from "../hooks/useGeneral";
+import apis from "../utils/apis";
+import httpAction from "../utils/httpAction";
+import { toast } from "react-hot-toast";
 
 const Register = () => {
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { navigate } = useGeneral();
 
-  const visibleHandler = () => {
-    setVisible(!visible);
-  };
+  const toggleVisibility = () => setVisible(!visible);
+
   const initialState = {
     name: "",
     email: "",
@@ -32,86 +30,114 @@ const Register = () => {
 
   const validationSchema = yup.object({
     name: yup.string().required("Name is required"),
-    email: yup
-      .string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: yup
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+    email: yup.string().email("Invalid email format").required("Email is required"),
+    password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
   });
 
-  const submitHandler = (values) => {
-    console.log(values);
+  const submitHandler = async (values, { resetForm }) => {
+    setLoading(true);
+    try {
+      const data = {
+        url: apis().registerUser,
+        method: "POST",
+        body: values,
+      };
+
+      const result = await httpAction(data);
+
+      if (result?.success) {
+        toast.success(result.message || "Registered successfully!");
+        resetForm();
+      } else {
+        toast.error(result?.message || "Something went wrong!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Server error!");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div className="auth_card">
       <Formik
-        onSubmit={submitHandler}
-        validationSchema={validationSchema}
         initialValues={initialState}
+        validationSchema={validationSchema}
+        onSubmit={submitHandler}
       >
-        {({ handleBlur, handleChange, values, touched, errors }) => (
+        {({ handleChange, handleBlur, values, touched, errors }) => (
           <Form>
             <div className="container-fluid">
               <div className="row g-3">
                 <div className="col-12 auth_header">
                   <IoMdPersonAdd />
-
                   <p>Create New Account</p>
                   <span>Signup to Continue</span>
                 </div>
+
+                {/* Name */}
                 <div className="col-12">
                   <TextField
                     name="name"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    error={touched.name && Boolean(errors.name)}
-                    helperText={touched.name && errors.name}
+                    autoComplete="new-name"
                     label="Your name"
                     fullWidth
                     size="small"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.name && Boolean(errors.name)}
+                    helperText={touched.name && errors.name}
                   />
                 </div>
+
+                {/* Email */}
                 <div className="col-12">
                   <TextField
                     name="email"
-                    type="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    error={touched.email && Boolean(errors.email)}
-                    helperText={touched.email && errors.email}
+                    autoComplete="new-email"
                     label="Your email"
+                    type="email"
                     fullWidth
                     size="small"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
                   />
                 </div>
+
+                {/* Password */}
                 <div className="col-12">
                   <TextField
+                    name="password"
+                    autoComplete="new-password"
+                    label="Create New Password"
+                    type={visible ? "text" : "password"}
+                    fullWidth
+                    size="small"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.password && Boolean(errors.password)}
+                    helperText={touched.password && errors.password}
                     InputProps={{
                       endAdornment: (
-                        <InputAdornment>
-                          <IconButton edge="end" onClick={visibleHandler}>
+                        <InputAdornment position="end">
+                          <IconButton onClick={toggleVisibility}>
                             {visible ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),
                     }}
-                    name="password"
-                    type={visible ? "text" : "password"}
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    error={touched.password && Boolean(errors.password)}
-                    helperText={touched.password && errors.password}
-                    label="Create New password"
-                    fullWidth
-                    size="small"
                   />
                 </div>
+
+                {/* Submit */}
                 <div className="col-12">
-                  <Button type="submit" variant="contained" fullWidth>
-                    Signup
+                  <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                    {loading ? "Signing Up..." : "Signup"}
                   </Button>
                 </div>
 
@@ -119,14 +145,17 @@ const Register = () => {
                   <Divider>OR</Divider>
                 </div>
 
+                {/* Google login */}
                 <div className="col-12">
-                  <Button variant="outlined" fullWidth endIcon={<Google />}>
+                  <Button variant="outlined" fullWidth endIcon={<Google />} onClick={() => toast("Google Login coming soon!")}>
                     Continue With Google
                   </Button>
                 </div>
+
+                {/* Back to login */}
                 <div className="col-12">
                   <Button
-                    onClick={()=> navigate("/login")}
+                    onClick={() => navigate("/login")}
                     variant="outlined"
                     fullWidth
                     startIcon={<ArrowBack />}
@@ -134,11 +163,6 @@ const Register = () => {
                     Back to Login
                   </Button>
                 </div>
-                {/* <div className="col-12">
-                  <Button variant="text" fullWidth color="error">
-                    forget password?
-                  </Button>
-                </div> */}
               </div>
             </div>
           </Form>

@@ -9,18 +9,23 @@ import React, { useState } from "react";
 import { IoIosLogIn } from "react-icons/io";
 import * as yup from "yup";
 import { Form, Formik } from "formik";
-import { ArrowBack, Google, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  ArrowBack,
+  Google,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import useGeneral from "../hooks/useGeneral";
+import apis from "../utils/apis";
+import httpAction from "../utils/httpAction";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
-  const [visible, setVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { navigate } = useGeneral();
 
-  const visibleHandler = () => {
-    setVisible(!visible);
-  };
-
-  const initialState = {
+  const initialValues = {
     email: "",
     password: "",
   };
@@ -36,67 +41,117 @@ const Login = () => {
       .required("Password is required"),
   });
 
-  const submitHandler = (values) => {
-    console.log(values);
+  const submitHandler = async (values, { resetForm }) => {
+    setLoading(true);
+    try {
+      const result = await httpAction({
+        url: apis().loginUser,
+        method: "POST",
+        body: values,
+        
+      });
+
+      
+      
+
+      if (result?.success) {
+        toast.success(result.message || "Login successful");
+        resetForm();
+        navigate("/"); // or /dashboard
+        
+      } else {
+        console.log('invalid credentials');
+        
+      }
+    } catch (error) {
+      toast.error("Server error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginWithGoogle = () => {
-    window.location.href = "http://localhost:5050/auth/google";
-  }
+    window.location.href = import.meta.env.VITE_GOOGLE_AUTH_URL;
+  };
 
   return (
     <div className="auth_card">
       <Formik
-        onSubmit={submitHandler}
+        initialValues={initialValues}
         validationSchema={validationSchema}
-        initialValues={initialState}
+        onSubmit={submitHandler}
       >
         {({ handleBlur, handleChange, values, touched, errors }) => (
-          <Form>
+          <Form autoComplete="off">
             <div className="container-fluid">
               <div className="row g-3">
+                {/* Header */}
                 <div className="col-12 auth_header">
                   <IoIosLogIn />
                   <p>Welcome Back</p>
                   <span>Login to Continue</span>
                 </div>
+
+                {/* Email */}
                 <div className="col-12">
                   <TextField
                     name="email"
+                    autoComplete="new-email"
+                    value={values.email}
                     onBlur={handleBlur}
                     onChange={handleChange}
                     error={touched.email && Boolean(errors.email)}
                     helperText={touched.email && errors.email}
-                    label="Your email"
+                    label="Email"
                     fullWidth
                     size="small"
                   />
                 </div>
+
+                {/* Password */}
                 <div className="col-12">
                   <TextField
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment>
-                          <IconButton edge="end" onClick={visibleHandler}>
-                            {visible ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
                     name="password"
-                    type={visible ? "text" : "password"}
+                    autoComplete="new-password"
+                    value={values.password}
+                    type={showPassword ? "text" : "password"}
                     onBlur={handleBlur}
                     onChange={handleChange}
                     error={touched.password && Boolean(errors.password)}
                     helperText={touched.password && errors.password}
-                    label="Your password"
+                    label="Password"
                     fullWidth
                     size="small"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() =>
+                              setShowPassword((prev) => !prev)
+                            }
+                            edge="end"
+                          >
+                            {showPassword ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </div>
+
+                {/* Login Button */}
                 <div className="col-12">
-                  <Button type="submit" variant="contained" fullWidth>
-                    Login
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={loading}
+                  >
+                    {loading ? "Logging in..." : "Login"}
                   </Button>
                 </div>
 
@@ -104,19 +159,39 @@ const Login = () => {
                   <Divider>OR</Divider>
                 </div>
 
+                {/* Google Login */}
                 <div className="col-12">
-                  <Button onClick={loginWithGoogle} variant="outlined" fullWidth endIcon={<Google />}>
-                    Google
+                  <Button
+                    onClick={loginWithGoogle}
+                    variant="outlined"
+                    fullWidth
+                    endIcon={<Google />}
+                  >
+                    Continue with Google
                   </Button>
                 </div>
+
+                {/* Register */}
                 <div className="col-12">
-                  <Button onClick={()=> navigate("/register")} variant="outlined" fullWidth startIcon={<ArrowBack />}>
+                  <Button
+                    onClick={() => navigate("/register")}
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<ArrowBack />}
+                  >
                     Create New Account
                   </Button>
                 </div>
+
+                {/* Forget Password */}
                 <div className="col-12">
-                  <Button onClick={()=> navigate("/password/forget")} variant="text" fullWidth color="error">
-                    forget password?
+                  <Button
+                    onClick={() => navigate("/password/forget")}
+                    variant="text"
+                    fullWidth
+                    color="error"
+                  >
+                    Forgot password?
                   </Button>
                 </div>
               </div>

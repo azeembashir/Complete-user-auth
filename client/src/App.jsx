@@ -8,6 +8,7 @@ import OtpVerification from './components/OtpVerification';
 import UpdatePassword from './components/UpdatePassword';
 import Profile from './components/Profile';
 
+
 const App = () => {
   return (
     <Routes>
@@ -17,6 +18,7 @@ const App = () => {
       <Route path='/otp/verify' element={<OtpVerification />} />
       <Route path='/password/update' element={<UpdatePassword />} />
       <Route path='/' element={<Profile />} />
+      
     </Routes>
   )
 }

@@ -5,7 +5,11 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
+const connectDB = require("./utils/connection");
+const googleAuth = require("./middlewares/googleAuth");
+const userRouter = require("./routes/userRoutes");
 const googleStrategy = require("passport-google-oauth20").Strategy;
+
 
 // Middleware setup
 const app = express();
@@ -13,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "http://localhost:5050",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -63,11 +67,17 @@ app.get(
   passport.authenticate("google", {
     failureRedirect: "http://localhost:3000/login",
   }),
+  googleAuth,       //calling middleware
   (req, res, next) => {
     res.redirect("http://localhost:3000/");
   }
 );
 
+//routes 
+app.use('/user', userRouter)
+
+
+connectDB();
 //app listening port
 const port = process.env.PORT || 6060;
 app.listen(port, () => {
