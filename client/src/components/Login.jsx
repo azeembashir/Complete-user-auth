@@ -48,20 +48,14 @@ const Login = () => {
         url: apis().loginUser,
         method: "POST",
         body: values,
-        
       });
-
-      
-      
 
       if (result?.success) {
         toast.success(result.message || "Login successful");
         resetForm();
         navigate("/"); // or /dashboard
-        
       } else {
-        console.log('invalid credentials');
-        
+        console.log("invalid credentials");
       }
     } catch (error) {
       toast.error("Server error");
@@ -126,16 +120,10 @@ const Login = () => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            onClick={() =>
-                              setShowPassword((prev) => !prev)
-                            }
+                            onClick={() => setShowPassword((prev) => !prev)}
                             edge="end"
                           >
-                            {showPassword ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
                       ),

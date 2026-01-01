@@ -4,6 +4,8 @@ const apis = ()=>{
     const list = {
         registerUser: `${local}user/register`,
         loginUser: `${local}user/login`,
+        userProfile: `${local}user/getuser`,
+        userLogout: `${local}user/logout`,
     };
 
     return list;

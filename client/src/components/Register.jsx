@@ -58,6 +58,10 @@ const Register = () => {
     }
   };
 
+  const googleLogin = () => {
+  window.location.href = "http://localhost:5050/auth/google";
+};
+
   return (
     <div className="auth_card">
       <Formik
@@ -147,7 +151,7 @@ const Register = () => {
 
                 {/* Google login */}
                 <div className="col-12">
-                  <Button variant="outlined" fullWidth endIcon={<Google />} onClick={() => toast("Google Login coming soon!")}>
+                  <Button variant="outlined" fullWidth endIcon={<Google />} onClick={googleLogin}>
                     Continue With Google
                   </Button>
                 </div>

@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
         type: Number,
         default: 5,
       },
+      last_attempt:{
+        type: Object
+      },
     },
   },
   { timestamps: true }

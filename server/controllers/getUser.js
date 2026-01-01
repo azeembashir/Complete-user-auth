@@ -4,3 +4,5 @@ const getUser = (req, res) => {
     user: req.user,
   });
 };
+
+module.exports = getUser;
