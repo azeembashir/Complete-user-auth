@@ -6,6 +6,7 @@ const apis = ()=>{
         loginUser: `${local}user/login`,
         userProfile: `${local}user/getuser`,
         userLogout: `${local}user/logout`,
+        forgetPassword: `${local}user/password/forget`,
     };
 
     return list;

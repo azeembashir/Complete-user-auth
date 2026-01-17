@@ -7,11 +7,12 @@ import { Form, Formik } from "formik";
 import { ArrowBack, ChairAltTwoTone } from "@mui/icons-material";
 import { IoMdSend } from "react-icons/io";
 import useGeneral from "../hooks/useGeneral";
+import apis from "../utils/apis";
+import httpAction from "../utils/httpAction";
+import toast from "react-hot-toast";
 
 const ForgetPassword = () => {
-
   const { navigate } = useGeneral();
-
 
   const initialState = {
     email: "",
@@ -23,9 +24,19 @@ const ForgetPassword = () => {
       .email("Invalid email format")
       .required("Email is required"),
   });
-  const submitHandler = (values) => {
-    console.log(values);
-    navigate("/otp/verify");
+  const submitHandler = async (values) => {
+    const data = {
+      url: apis().forgetPassword,
+      method: "POST",
+      body: { email: values.email },
+    };
+    const result = await httpAction(data);
+    if(result?.success){
+      toast.success(result?.message || "Otp sent to your email");
+      navigate("/otp/verify");
+    }
+    
+    
   };
   return (
     <div className="auth_card">
@@ -47,7 +58,6 @@ const ForgetPassword = () => {
 
                 <div className="col-12">
                   <TextField
-                    
                     name="email"
                     type="email"
                     onBlur={handleBlur}
@@ -81,7 +91,6 @@ const ForgetPassword = () => {
                     Back to Login
                   </Button>
                 </div>
-                
               </div>
             </div>
           </Form>
